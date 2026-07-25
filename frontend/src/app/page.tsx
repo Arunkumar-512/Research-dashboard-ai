@@ -157,10 +157,14 @@ export default function ResearchDashboard() {
 
     return () => clearInterval(interval);
   }, []);
+  const API_URL =
+    process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000";
 
   const checkBackendStatus = async () => {
     try {
-      const res = await fetch('http://127.0.0.1:8000/health-check', { signal: AbortSignal.timeout(5000) });
+      const res = await fetch(`${API_URL}/health-check`, {
+        signal: AbortSignal.timeout(5000),
+      });
       if (res.ok) {
         setBackendStatus('online');
         setError(null);
@@ -175,7 +179,7 @@ export default function ResearchDashboard() {
 
   const fetchHistory = async () => {
     try {
-      const res = await fetch('http://127.0.0.1:8000/threads');
+      const res = await fetch(`${API_URL}/threads`);
       if (!res.ok) throw new Error("Server unreachable");
       const data = await res.json();
       setHistory(Array.isArray(data) ? data : []);
@@ -191,7 +195,7 @@ export default function ResearchDashboard() {
     setQuery(queryText);
     setError(null);
     try {
-      const res = await fetch(`http://127.0.0.1:8000/thread/${id}`);
+      const res = await fetch(`${API_URL}/thread/${id}`);
       if (!res.ok) throw new Error("Failed to load thread");
       const data = await res.json();
       const cleanedReport = cleanContent(typeof data.report_content === 'string' ? data.report_content : "");
@@ -207,7 +211,12 @@ export default function ResearchDashboard() {
   const deleteHistoryItem = async (e: React.MouseEvent, id: number) => {
     e.stopPropagation();
     try {
-      const res = await fetch(`http://127.0.0.1:8000/thread/${id}`, { method: 'DELETE' });
+      const res = await fetch(
+        `${API_URL}/thread/${id}`,
+        {
+          method: 'DELETE'
+        }
+      );
       if (!res.ok) throw new Error("Failed to delete thread");
       setHistory(prev => prev.filter(item => item.id !== id));
       if (history.find(item => item.id === id)?.query === query) {
@@ -222,7 +231,12 @@ export default function ResearchDashboard() {
 
   const clearAllHistory = async () => {
     try {
-      const res = await fetch('http://127.0.0.1:8000/threads', { method: 'DELETE' });
+      const res = await fetch(
+        `${API_URL}/threads`,
+        {
+          method: 'DELETE'
+        }
+      );
       if (!res.ok) throw new Error("Failed to clear history");
       setHistory([]);
       setReport('');
@@ -244,7 +258,8 @@ export default function ResearchDashboard() {
 
     try {
       const encodedQuery = encodeURIComponent(query);
-      const url = `http://127.0.0.1:8000/stream-research?query=${encodedQuery}&thread_id=default_${Date.now()}`;
+      const url =
+        `${API_URL}/stream-research?query=${encodedQuery}&thread_id=default_${Date.now()}`;
       setLogs(prev => [...prev, `Researching: "${query.substring(0, 50)}..."`]);
 
       const response = await fetch(url);
@@ -311,11 +326,19 @@ export default function ResearchDashboard() {
 
       if (finalCleanedContent.length > 100) {
         setLogs(prev => [...prev, 'Saving report to database...']);
-        await fetch('http://127.0.0.1:8000/save-report', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ query, content: finalCleanedContent })
-        });
+        await fetch(
+          `${API_URL}/save-report`,
+          {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+              query,
+              content: finalCleanedContent
+            })
+          }
+        );
         setLogs(prev => [...prev, 'Research complete & saved!']);
         fetchHistory();
       } else {
@@ -581,10 +604,10 @@ export default function ResearchDashboard() {
                       <span className="text-xs font-semibold uppercase text-slate-400">Research Report</span>
                     </div>
                   </div>
-                  <div 
- id="report-container" 
- className="p-6 prose prose-sm max-w-none text-slate-200"
->
+                  <div
+                    id="report-container"
+                    className="p-6 prose prose-sm max-w-none text-slate-200"
+                  >
 
                     <ReactMarkdown
                       remarkPlugins={[remarkGfm]}
