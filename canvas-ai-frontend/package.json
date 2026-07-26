@@ -1,5 +1,5 @@
 {
-  "name": "frontend",
+  "name": "canvas-ai-frontend",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -9,19 +9,11 @@
     "lint": "eslint"
   },
   "dependencies": {
-    "ai": "^6.0.197",
-    "framer-motion": "^12.40.0",
-    "html2canvas": "^1.4.1",
-    "jspdf": "^4.2.1",
-    "lucide-react": "^1.17.0",
-    "mermaid": "^11.16.0",
-    "next": "16.2.7",
+    "lucide-react": "^1.16.0",
+    "next": "16.2.6",
     "react": "19.2.4",
     "react-dom": "19.2.4",
-    "react-markdown": "^10.1.0",
-    "react-syntax-highlighter": "^16.1.1",
-    "rehype-raw": "^7.0.0",
-    "remark-gfm": "^4.0.1"
+    "recharts": "^3.8.1"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
@@ -29,7 +21,7 @@
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "eslint": "^9",
-    "eslint-config-next": "16.2.7",
+    "eslint-config-next": "16.2.6",
     "tailwindcss": "^4",
     "typescript": "^5"
   }
